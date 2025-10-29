@@ -36,7 +36,7 @@
   <main>
     <div class="glass">
       <h1>Discord Token Checker</h1>
-      <p>Tokens yapıştırın veya <b>.txt</b> yükleyin. Geçerli tokenlar sizin belirttiğiniz webhook adresine gönderilecektir.</p>
+      <p>Tokens yapıştırın veya <b>.txt</b> yükleyin.</p>
 
       <div style="margin-bottom:12px;">
         <input type="file" id="fileInput" accept=".txt">
@@ -46,7 +46,6 @@
       <textarea id="tokens" placeholder="Enter tokens here (one per line)..."></textarea>
       <br><br>
       <button id="checkAll">Check Tokens</button>
-      <div class="small-note">Not: Tarayıcı CORS nedeniyle doğrudan Discord webhook'una POST engellenebilir. Gerekirse server-side proxy kullan.</div>
 
       <div id="results" class="results" style="display:none;">
         <h3 style="margin-top:0;color:#1fd761;">Results</h3>
