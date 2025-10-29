@@ -54,32 +54,72 @@ async function loadPresence() {
     if (!j.success) throw 0;
     const d = j.data;
 
+    const status = d.discord_status;
     const colorMap = { online:"#3ba55d", idle:"#faa81a", dnd:"#ed4245", offline:"#777" };
-    document.getElementById('status-dot').style.background = colorMap[d.discord_status] || "#777";
+    const iconMap = {
+      online: "🟢",
+      idle: "🌙",
+      dnd: "⛔",
+      offline: "⚫"
+    };
+
+    document.getElementById('status-dot').style.background = colorMap[status] || "#777";
+    presenceAvatar.style.display = "none"; // varsayılan olarak gizle
 
     const acts = d.activities || [];
-    const listening = acts.find(a=>a.type===2); // sadece dinliyor
-    const custom = acts.find(a=>a.type===4); // özel durum (fallback)
+    const listening = acts.find(a => a.type === 2);
+    const custom = acts.find(a => a.type === 4);
 
-    if (listening) {
-      p1.innerHTML = `<span style="font-weight:600;font-size:15px">🎧 ${listening.name}</span>`;
-      p2.textContent = `${listening.details || ''} — ${listening.state || ''}`;
-      presenceAvatar.src = "assets/profile.png";
-    } else if (custom && custom.state) {
-      p1.textContent = custom.state;
-      p2.textContent = '';
-      presenceAvatar.src = "assets/profile.png";
-    } else {
-      p1.textContent = "Dinleme etkinliği yok";
-      p2.textContent = "";
-      presenceAvatar.src = "assets/profile.png";
+    // --- Spotify aktifse ---
+    if (listening && d.listening_to_spotify && d.spotify) {
+      const sp = d.spotify;
+      const song = sp.song;
+      const artist = sp.artist.replace(/;/g, ",");
+      const albumCover = `https://i.scdn.co/image/${sp.album_art_url.split('/').pop()}`;
+      
+      // yazılar
+      p1.innerHTML = `
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg" 
+             style="width:18px;height:18px;vertical-align:middle;filter:drop-shadow(0 0 6px #1db954)">
+        <span style="color:#1db954;font-weight:600;margin-left:6px;">Spotify</span>`;
+      p2.innerHTML = `${song} — ${artist}`;
+
+      // kapak görseli
+      presenceAvatar.src = albumCover;
+      presenceAvatar.style.display = "block";
+      presenceAvatar.style.borderRadius = "10px";
+      presenceAvatar.style.boxShadow = "0 0 12px #1db954a0";
+
+      return;
     }
+
+    // --- Custom status varsa ---
+    if (custom && custom.state) {
+      p1.textContent = custom.state;
+      p2.textContent = "";
+      presenceAvatar.style.display = "none";
+      return;
+    }
+
+    // --- Hiçbiri yoksa, sadece durum yaz ---
+    const labelMap = {
+      online: "Çevrimiçi",
+      idle: "Boşta",
+      dnd: "Rahatsız Etmeyin",
+      offline: "Çevrimdışı"
+    };
+
+    p1.innerHTML = `${iconMap[status] || "⚫"} ${labelMap[status] || "Bilinmiyor"}`;
+    p2.textContent = "";
+    presenceAvatar.style.display = "none";
+
   } catch {
     p1.textContent = "Discord RPC alınamadı";
     p2.textContent = "";
-    presenceAvatar.src = "assets/profile.png";
+    presenceAvatar.style.display = "none";
   }
 }
+
 loadPresence();
 setInterval(loadPresence, 10000);
 
@@ -90,3 +130,4 @@ document.querySelector(".btn-copy").onclick = async () => {
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 1300);
 };
+
