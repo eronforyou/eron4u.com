@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* WhatsApp Kartı */
     #wa-card{
       display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
       z-index:60;width:420px;background:rgba(255,255,255,.08);
@@ -23,6 +22,16 @@
     #wa-card .flag{width:90px;height:60px;border-radius:8px;border:1px solid rgba(255,255,255,0.25);object-fit:cover;transition:transform .2s, box-shadow .2s;}
     #wa-card .flag:hover{transform:scale(1.08);box-shadow:0 0 10px rgba(255,255,255,.25);}
     #wa-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(3px);z-index:59;}
+
+    .projects-btn{
+      display:none;
+      position:fixed;right:20px;bottom:20px;z-index:20;
+      background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+      backdrop-filter:blur(12px);border-radius:14px;padding:10px 20px;
+      color:#fff;font-size:15px;cursor:pointer;transition:.25s;
+      box-shadow:0 0 12px rgba(0,0,0,.4);
+    }
+    .projects-btn:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(255,255,255,.6);}
   </style>
 </head>
 <body>
@@ -42,14 +51,14 @@
       <div class="presence" id="presence">
         <img id="presence-avatar" class="p-avatar" src="assets/profile.png" alt="">
         <div class="p-text">
-          <div id="p-line1">Discord RPC yükleniyor...</div>
+          <div id="p-line1">Loading Discord RPC...</div>
           <div id="p-line2"></div>
         </div>
         <span class="status-dot" id="status-dot"></span>
       </div>
 
       <nav class="icons">
-        <button class="icon btn-copy" title="Discord kopyala"><i class="fa-brands fa-discord"></i></button>
+        <button class="icon btn-copy" title="Copy Discord"><i class="fa-brands fa-discord"></i></button>
         <a class="icon" href="https://www.youtube.com/@eron4u" target="_blank"><i class="fa-brands fa-youtube"></i></a>
         <a class="icon" href="https://open.spotify.com/user/31fv7xymukml7tnf6kuwyokbd5la" target="_blank"><i class="fa-brands fa-spotify"></i></a>
         <a class="icon" href="https://www.instagram.com/eron4u/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
@@ -61,10 +70,10 @@
     </section>
   </main>
 
-  <div id="toast" class="toast">Kopyalandı</div>
+  <div id="toast" class="toast">Copied</div>
 
   <div id="wa-card">
-    <h2>Hangi numarayı kopyalamak istersiniz?</h2>
+    <h2>Which number would you like to copy?</h2>
     <div class="divider"></div>
     <div class="flags">
       <img id="flag-tr" class="flag" src="https://flagcdn.com/w80/tr.png" alt="TR">
@@ -77,6 +86,8 @@
     <i class="fa-solid fa-volume-high"></i>
     <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
   </div>
+
+  <button id="projectsBtn" class="projects-btn" onclick="window.location.href='https://eron4u.com/projects'">View My Projects</button>
 
   <script src="script.js"></script>
 </body>
