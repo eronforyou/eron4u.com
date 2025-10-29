@@ -55,7 +55,7 @@ const p2 = document.getElementById("p-line2");
 
 async function loadPresence() {
   try {
-    const res = await fetch(`https://corsproxy.io/?https://api.lanyard.rest/v1/users/${DISCORD_ID}`, { cache: "no-store" });
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`, { cache: "no-store" });
     const j = await res.json();
     if (!j.success) throw 0;
     const d = j.data;
@@ -96,3 +96,4 @@ document.querySelector(".btn-copy").onclick = async () => {
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 1300);
 };
+
