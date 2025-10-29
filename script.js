@@ -1,4 +1,4 @@
-// === Temel elemanlar ===
+// === Elemanlar ===
 const overlay = document.getElementById('overlay');
 const video = document.getElementById('bg');
 const card = document.getElementById('card');
@@ -14,19 +14,33 @@ const DISCORD_ID = document.querySelector('.wrap').dataset.discordId;
 overlay.addEventListener('click', () => {
   overlay.style.opacity = '0';
   setTimeout(() => overlay.style.display = 'none', 400);
+
+  // Click anında görünür olsun
   volumeBox.style.display = 'flex';
 
-  // Video sıfırdan başlasın
+  // Her tıklamada videoyu en baştan başlat
   try {
     video.pause();
-    video.currentTime = 0; // her tıklamada en baştan
+    video.currentTime = 0;
     video.muted = false;
+    // slider değerini uygula (çalışmıyor sorununu çözer)
+    const vol = parseFloat(volumeSlider.value || '1');
+    video.volume = isNaN(vol) ? 1 : vol;
     video.play().catch(()=>{});
-  } catch (e) {
-    console.error("Video başlatılamadı:", e);
-  }
+  } catch(e){}
 });
 
+// Click öncesi slider görünmesin (CSS zaten gizliyor), yine de garanti:
+volumeBox.style.display = 'none';
+
+// Slider çalışmıyor sorununa kesin çözüm: her input’ta volume ayarla, muted ise aç
+volumeSlider.addEventListener('input', e => {
+  const v = parseFloat(e.target.value);
+  if (!isNaN(v)) {
+    if (video.muted) video.muted = false;
+    video.volume = v;
+  }
+});
 
 // === Mouse takip animasyonu (optimize) ===
 (() => {
@@ -67,10 +81,10 @@ async function loadPresence() {
     if (d.listening_to_spotify && d.spotify) {
       const s = d.spotify;
       const songName = (s.song || "").split(" — ")[0];
-      // ✅ Gerçek Spotify logosu (tam SVG)
       p1.innerHTML = `
         <div style="display:flex;align-items:center;gap:6px;">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" width="18" height="18" fill="#1fd761">
+          <!-- Gerçek Spotify logosu (glow yok) -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" width="18" height="18" fill="#1fd761" aria-hidden="true" focusable="false">
             <path d="M248 8C111 8 0 119 0 256s111 248 248 248
             248-111 248-248S385 8 248 8zm121.9 359.3
             c-4.2 6.9-13.3 9-20.2 4.8
@@ -112,44 +126,36 @@ async function loadPresence() {
 loadPresence();
 setInterval(loadPresence, 10000);
 
-// === Discord kopyalama ===
+// === Discord kullanıcı adı kopyalama ===
 document.querySelector(".btn-copy").onclick = async () => {
   await navigator.clipboard.writeText("eron4u");
   toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 1300);
+  setTimeout(() => toast.classList.remove('show'), 1300);
 };
 
 // === WhatsApp kart ===
 const waIcon = document.getElementById('wa-icon');
 const waCard = document.getElementById('wa-card');
 const waBackdrop = document.getElementById('wa-backdrop');
-
 if (waIcon && waCard && waBackdrop) {
   waIcon.style.cursor = 'pointer';
   document.querySelectorAll('#wa-card .flag').forEach(f => f.style.cursor = 'pointer');
-
   waIcon.addEventListener('click', () => {
-    const visible = waCard.style.display === 'block';
-    waCard.style.display = visible ? 'none' : 'block';
-    waBackdrop.style.display = visible ? 'none' : 'block';
+    const v = waCard.style.display === 'block';
+    waCard.style.display = v ? 'none' : 'block';
+    waBackdrop.style.display = v ? 'none' : 'block';
   });
-
   waBackdrop.addEventListener('click', () => {
     waCard.style.display = 'none';
     waBackdrop.style.display = 'none';
   });
-
-  function copyNumber(num) {
+  const copy = num => {
     navigator.clipboard.writeText(num);
     toast.textContent = num + ' kopyalandı';
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 1400);
-    waCard.style.display = 'none';
-    waBackdrop.style.display = 'none';
-  }
-
-  const tr = document.getElementById('flag-tr');
-  const gb = document.getElementById('flag-gb');
-  if (tr) tr.onclick = () => copyNumber('+90 537 516 59 18');
-  if (gb) gb.onclick = () => copyNumber('+44 7346 244942');
+    setTimeout(()=>toast.classList.remove('show'),1400);
+    waCard.style.display='none';waBackdrop.style.display='none';
+  };
+  document.getElementById('flag-tr').onclick = () => copy('+90 537 516 59 18');
+  document.getElementById('flag-gb').onclick = () => copy('+44 7346 244942');
 }
