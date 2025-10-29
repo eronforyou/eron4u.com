@@ -54,72 +54,59 @@ async function loadPresence() {
     if (!j.success) throw 0;
     const d = j.data;
 
-    const status = d.discord_status;
     const colorMap = { online:"#3ba55d", idle:"#faa81a", dnd:"#ed4245", offline:"#777" };
-    const iconMap = {
-      online: "🟢",
-      idle: "🌙",
-      dnd: "⛔",
-      offline: "⚫"
-    };
-
-    document.getElementById('status-dot').style.background = colorMap[status] || "#777";
-    presenceAvatar.style.display = "none"; // varsayılan olarak gizle
+    document.getElementById('status-dot').style.background = colorMap[d.discord_status] || "#777";
 
     const acts = d.activities || [];
-    const listening = acts.find(a => a.type === 2);
-    const custom = acts.find(a => a.type === 4);
+    const listening = acts.find(a=>a.type===2); // Spotify
+    const custom = acts.find(a=>a.type===4);    // Custom status fallback
+    const status = d.discord_status;
 
-    // --- Spotify aktifse ---
     if (listening && d.listening_to_spotify && d.spotify) {
-      const sp = d.spotify;
-      const song = sp.song;
-      const artist = sp.artist.replace(/;/g, ",");
-      const albumCover = `https://i.scdn.co/image/${sp.album_art_url.split('/').pop()}`;
-      
-      // yazılar
+      const track = d.spotify.song || "";
+      const cover = d.spotify.album_art_url || "";
+      const songName = track.split(" — ")[0]; // yalnızca şarkı ismi
+
+      // Yeşil Spotify görünümü
       p1.innerHTML = `
-        <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg" 
-             style="width:18px;height:18px;vertical-align:middle;filter:drop-shadow(0 0 6px #1db954)">
-        <span style="color:#1db954;font-weight:600;margin-left:6px;">Spotify</span>`;
-      p2.innerHTML = `${song} — ${artist}`;
+        <div style="display:flex;align-items:center;gap:6px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" width="18" height="18" fill="#1fd761">
+            <path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm121.9 359.3c-4.2 6.9-13.3 9-20.2 4.8-55.2-33.8-124.8-41.5-206.6-22.9-7.9 1.8-15.9-3.1-17.7-11s3.1-15.9 11-17.7c88.4-20.2 164.4-11.2 226.4 26.9 6.9 4.2 9 13.3 4.8 20.2zm28.6-65.1c-5.2 8.4-16.2 11.1-24.6 5.9-62.9-38.5-158.8-49.6-232.9-27.4-9.3 2.8-19.2-2.3-22-11.6s2.3-19.2 11.6-22c84.6-25.4 189.6-13.1 261.4 31.3 8.4 5.2 11.1 16.2 5.9 24.6zm2.4-67.9C333.3 191.3 215.6 179 137 203.8c-10.3 3.2-21.2-2.6-24.4-12.9s2.6-21.2 12.9-24.4c88.4-27.8 221.2-14.1 304.5 37.3 9.2 5.6 12.1 17.6 6.5 26.8s-17.6 12.1-26.8 6.5z"/>
+          </svg>
+          <span style="font-weight:600;font-size:15px;color:#1fd761;">Spotify</span>
+        </div>`;
+      p2.textContent = songName;
 
-      // kapak görseli
-      presenceAvatar.src = albumCover;
-      presenceAvatar.style.display = "block";
-      presenceAvatar.style.borderRadius = "10px";
-      presenceAvatar.style.boxShadow = "0 0 12px #1db954a0";
+      if (cover) presenceAvatar.src = cover;
+      else presenceAvatar.src = "assets/profile.png";
+    } 
+    else {
+      // Dinleme yoksa durum ikon + metin
+      const statusIcons = {
+        online: "🟢",
+        idle: "🌙",
+        dnd: "⛔",
+        offline: "⚫"
+      };
+      const statusNames = {
+        online: "Çevrimiçi",
+        idle: "Boşta",
+        dnd: "Rahatsız Etmeyin",
+        offline: "Çevrimdışı"
+      };
 
-      return;
-    }
-
-    // --- Custom status varsa ---
-    if (custom && custom.state) {
-      p1.textContent = custom.state;
+      const icon = statusIcons[status] || "⚫";
+      const name = statusNames[status] || "Bilinmiyor";
+      p1.innerHTML = `${icon} ${name}`;
       p2.textContent = "";
-      presenceAvatar.style.display = "none";
-      return;
+      presenceAvatar.src = "assets/profile.png";
     }
-
-    // --- Hiçbiri yoksa, sadece durum yaz ---
-    const labelMap = {
-      online: "Çevrimiçi",
-      idle: "Boşta",
-      dnd: "Rahatsız Etmeyin",
-      offline: "Çevrimdışı"
-    };
-
-    p1.innerHTML = `${iconMap[status] || "⚫"} ${labelMap[status] || "Bilinmiyor"}`;
-    p2.textContent = "";
-    presenceAvatar.style.display = "none";
-
   } catch {
     p1.textContent = "Discord RPC alınamadı";
     p2.textContent = "";
-    presenceAvatar.style.display = "none";
+    presenceAvatar.src = "assets/profile.png";
   }
 }
-
 loadPresence();
 setInterval(loadPresence, 10000);
 
@@ -130,4 +117,3 @@ document.querySelector(".btn-copy").onclick = async () => {
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 1300);
 };
-
