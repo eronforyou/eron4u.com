@@ -4,6 +4,7 @@ const card = document.getElementById('card');
 const volumeSlider = document.getElementById('volumeSlider');
 const volumeBox = document.getElementById('volumeBox');
 
+// --- Video başlatma ---
 overlay.addEventListener('click', () => {
   overlay.style.opacity = '0';
   setTimeout(() => overlay.style.display = 'none', 400);
@@ -12,46 +13,39 @@ overlay.addEventListener('click', () => {
   video.play().catch(()=>{});
 });
 volumeBox.style.display = 'none';
-
 volumeSlider.addEventListener('input', e => video.volume = parseFloat(e.target.value));
 
+// --- Mouse takip animasyonu ---
 let tiltActive = true;
-
-// kartın üstündeyken tilt durur
 card.addEventListener('mouseenter', () => tiltActive = false);
 card.addEventListener('mouseleave', () => {
   tiltActive = true;
   card.style.transform = 'rotateX(0deg) rotateY(0deg)';
 });
-
-// mouse takip, sınırlandırılmış ve sabit
 document.addEventListener('mousemove', e => {
   if (!tiltActive) return;
   const rect = card.getBoundingClientRect();
   const centerX = rect.left + rect.width / 2;
   const centerY = rect.top + rect.height / 2;
   const maxRot = 15;
-
   let dx = e.clientX - centerX;
   let dy = e.clientY - centerY;
   const limitX = rect.width;
   const limitY = rect.height;
   if (Math.abs(dx) > limitX) dx = limitX * Math.sign(dx);
   if (Math.abs(dy) > limitY) dy = limitY * Math.sign(dy);
-
   const nx = dx / limitX;
   const ny = dy / limitY;
-
   const rotY = nx * maxRot;
   const rotX = -ny * maxRot;
-
   card.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
 });
 
-// Discord Presence (GitHub Pages uyumlu proxy)
+// --- Discord Presence ---
 const DISCORD_ID = document.querySelector('.wrap').dataset.discordId;
 const p1 = document.getElementById("p-line1");
 const p2 = document.getElementById("p-line2");
+const presenceAvatar = document.getElementById("presence-avatar");
 
 async function loadPresence() {
   try {
@@ -64,36 +58,35 @@ async function loadPresence() {
     document.getElementById('status-dot').style.background = colorMap[d.discord_status] || "#777";
 
     const acts = d.activities || [];
-    const playing = acts.find(a=>a.type===0);
-    const listening = acts.find(a=>a.type===2);
-    const custom = acts.find(a=>a.type===4);
+    const listening = acts.find(a=>a.type===2); // sadece dinliyor
+    const custom = acts.find(a=>a.type===4); // özel durum (fallback)
 
-    if (playing) {
-      p1.textContent = `🎮 ${playing.name}`;
-      p2.textContent = `${playing.details || ''} ${playing.state ? '— ' + playing.state : ''}`;
-    } else if (listening) {
-      p1.textContent = `🎧 ${listening.name}`;
+    if (listening) {
+      p1.innerHTML = `<span style="font-weight:600;font-size:15px">🎧 ${listening.name}</span>`;
       p2.textContent = `${listening.details || ''} — ${listening.state || ''}`;
+      presenceAvatar.src = "assets/profile.png";
     } else if (custom && custom.state) {
       p1.textContent = custom.state;
       p2.textContent = '';
+      presenceAvatar.src = "assets/profile.png";
     } else {
-      p1.textContent = "Çevrimdışı veya etkinlik yok";
+      p1.textContent = "Dinleme etkinliği yok";
       p2.textContent = "";
+      presenceAvatar.src = "assets/profile.png";
     }
   } catch {
     p1.textContent = "Discord RPC alınamadı";
     p2.textContent = "";
+    presenceAvatar.src = "assets/profile.png";
   }
 }
 loadPresence();
 setInterval(loadPresence, 10000);
 
-// kopyalama bildirimi
+// --- Kopyalama bildirimi ---
 const toast = document.getElementById("toast");
 document.querySelector(".btn-copy").onclick = async () => {
   await navigator.clipboard.writeText("eron4u");
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 1300);
 };
-
