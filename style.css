@@ -1,4 +1,7 @@
-html,body{height:100%;margin:0;background:#000;color:#fff;font-family:'Poppins',sans-serif;overflow:hidden}
+html,body{
+  height:100%;margin:0;background:#000;color:#fff;
+  font-family:'Poppins',sans-serif;overflow:hidden
+}
 .bg-video{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;background:#000}
 .bg-dim{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:1}
 
@@ -18,71 +21,34 @@ html,body{height:100%;margin:0;background:#000;color:#fff;font-family:'Poppins',
   border-radius:20px;
   padding:28px 32px;text-align:center;
   box-shadow:0 12px 60px rgba(0,0,0,.4);
-  transition:transform .15s ease-out;
-  transform-style:preserve-3d;
+  transform-style:preserve-3d;will-change:transform;
 }
 .avatar{width:110px;height:110px;border-radius:50%;border:3px solid rgba(255,255,255,.3);object-fit:cover;margin-bottom:2px}
-.nick{font-size:34px;font-weight:500;margin:0 0 6px 0;text-shadow:0 0 10px #fff}
+.nick{font-size:34px;font-weight:500;margin:0 0 6px;text-shadow:0 0 10px #fff}
 .presence{
-  margin:0 auto 18px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  width:70%;
-  max-width:480px;
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:14px;
-  padding:10px 14px;
-  position:relative;
+  margin:0 auto 18px;display:flex;align-items:center;gap:14px;width:70%;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:14px;padding:10px 14px;position:relative;
   box-shadow:0 0 10px rgba(0,0,0,.4);
 }
 .p-avatar{width:46px;height:46px;border-radius:10px;object-fit:cover}
 .p-text{text-align:left;flex:1;overflow:hidden}
-.p-line1{
-  font-weight:600;
-  font-size:15px;
-  color:#fff;
-  margin-bottom:2px;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  overflow:hidden;
-}
-.p-line2{
-  font-size:13px;
-  color:rgba(255,255,255,.7);
-  line-height:1.2;
-  text-overflow:ellipsis;
-  overflow:hidden;
-}
-.status-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  border:2px solid rgba(255,255,255,.5);
-  position:absolute;
-  right:10px;
-  top:10px;
-}
+.p-line1{font-weight:600;font-size:15px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-line2{font-size:13px;color:rgba(255,255,255,.7);line-height:1.2;text-overflow:ellipsis;overflow:hidden}
+.status-dot{width:10px;height:10px;border-radius:50%;border:2px solid rgba(255,255,255,.5);position:absolute;right:10px;top:10px}
 
 .icons{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:12px}
-.icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;
+.icon{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;
   background:rgba(255,255,255,.12);color:#fff;border:none;text-decoration:none;
-  box-shadow:0 0 8px rgba(255,255,255,.25);transition:.18s transform,.18s box-shadow}
+  box-shadow:0 0 8px rgba(255,255,255,.25);transition:.18s transform,.18s box-shadow
+}
 .icon:hover{transform:translateY(-2px);box-shadow:0 0 14px rgba(255,255,255,.8)}
 
 .toast{
-  position:fixed;
-  left:50%;
-  bottom:120px;
-  transform:translateX(-50%) translateY(20px);
-  background:rgba(0,0,0,.8);
-  color:#fff;
-  padding:10px 16px;
-  border-radius:12px;
-  opacity:0;pointer-events:none;
-  transition:.25s;font-size:14px;
-  z-index:50;
+  position:fixed;left:50%;bottom:120px;transform:translateX(-50%) translateY(20px);
+  background:rgba(0,0,0,.8);color:#fff;padding:10px 16px;border-radius:12px;
+  opacity:0;pointer-events:none;transition:.25s;font-size:14px;z-index:50
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -90,7 +56,9 @@ html,body{height:100%;margin:0;background:#000;color:#fff;font-family:'Poppins',
   position:fixed;bottom:15px;left:50%;transform:translateX(-50%);
   display:flex;align-items:center;gap:8px;
   background:rgba(0,0,0,.4);padding:6px 10px;border-radius:10px;
-  backdrop-filter:blur(6px);z-index:10;
+  backdrop-filter:blur(6px);z-index:10
 }
 .volume-control input[type=range]{accent-color:#fff;width:120px}
 .volume-control i{font-size:18px}
+
+#wa-icon { cursor:pointer; }
