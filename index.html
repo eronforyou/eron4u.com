@@ -3,20 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>eron4u</title>
+  <title>eron4u's bio</title>
   <meta name="description" content="eron4u's bio">
-  <link rel="icon" href="data:,">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* WhatsApp Kartı */
+    #wa-card{
+      display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+      z-index:60;width:420px;background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.15);border-radius:22px;
+      backdrop-filter:blur(14px);box-shadow:0 10px 60px rgba(0,0,0,.45);
+      padding:18px 0 22px 0;text-align:center;
+    }
+    #wa-card h2{
+      color:#fff;font-size:14px;font-weight:300;margin-bottom:8px;letter-spacing:.4px;
+    }
+    #wa-card .divider{
+      height:1px;width:68%;background:rgba(255,255,255,0.1);
+      margin:6px auto 14px auto;
+    }
+    #wa-card .flags{display:flex;justify-content:center;align-items:center;gap:28px;cursor:pointer;}
+    #wa-card .flag{
+      width:90px;height:60px;border-radius:8px;
+      border:1px solid rgba(255,255,255,0.25);object-fit:cover;
+      transition:transform .2s, box-shadow .2s;
+    }
+    #wa-card .flag:hover{
+      transform:scale(1.08);box-shadow:0 0 10px rgba(255,255,255,.25);
+    }
+    #wa-backdrop{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.35);backdrop-filter:blur(3px);z-index:59;
+    }
+  </style>
 </head>
 <body>
 
-  <div id="overlay" class="overlay">
-    <h1>click here</h1>
-  </div>
+  <div id="overlay" class="overlay"><h1>click here</h1></div>
 
-  <video id="bg" class="bg-video" 
+  <video id="bg" class="bg-video"
   src="https://r2.guns.lol/c27fe9a8-8bcc-4c1d-be0a-abedad8abaf7.mp4"
   preload="auto" autoplay loop playsinline muted crossorigin="anonymous"></video>
   <div class="bg-dim"></div>
@@ -43,11 +70,22 @@
         <a class="icon" href="https://x.com/eronforyou" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
         <a class="icon" href="https://www.tiktok.com/@efeforyou" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
         <a class="icon" href="https://github.com/eronforyou" target="_blank"><i class="fa-brands fa-github"></i></a>
+        <button id="wa-icon" class="icon" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
       </nav>
     </section>
   </main>
 
   <div id="toast" class="toast">Kopyalandı</div>
+
+  <div id="wa-card">
+    <h2>Hangi numarayı kopyalamak istersiniz?</h2>
+    <div class="divider"></div>
+    <div class="flags">
+      <img id="flag-tr" class="flag" src="https://flagcdn.com/w80/tr.png" alt="TR">
+      <img id="flag-gb" class="flag" src="https://flagcdn.com/w80/gb.png" alt="GB">
+    </div>
+  </div>
+  <div id="wa-backdrop"></div>
 
   <div id="volumeBox" class="volume-control">
     <i class="fa-solid fa-volume-high"></i>
@@ -57,4 +95,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
