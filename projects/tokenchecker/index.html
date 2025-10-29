@@ -1,119 +1,52 @@
 <!doctype html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Discord Token Checker | eron4u</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="toast.css">
   <style>
-    html,body{
-      margin:0;height:100%;
-      background:#000;color:#fff;
-      font-family:'Poppins',sans-serif;
-      overflow-x:hidden;
-    }
-    video.bg{
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      object-fit:cover;z-index:0;background:#000;
-    }
-    .dim{
-      position:fixed;inset:0;background:rgba(0,0,0,.35);
-      z-index:1;backdrop-filter:blur(12px);
-    }
-    main{
-      position:relative;z-index:3;
-      display:flex;flex-direction:column;align-items:center;
-      justify-content:center;
-      min-height:100vh;padding:30px 0;
-    }
-    .glass{
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.15);
-      border-radius:20px;
-      backdrop-filter:blur(14px);
-      box-shadow:0 12px 50px rgba(0,0,0,.45);
-      width:90%;max-width:750px;
-      padding:40px 45px;text-align:center;
-    }
-    h1{
-      font-size:36px;margin:0;
-      font-weight:600;
-      text-shadow:0 0 12px #fff;
-    }
-    p{
-      color:rgba(255,255,255,.75);
-      font-size:15px;margin-top:8px;margin-bottom:24px;
-    }
-    input[type="file"]{
-      background:rgba(255,255,255,.1);
-      border:1px solid rgba(255,255,255,.25);
-      color:#fff;font-size:14px;
-      padding:8px 12px;border-radius:10px;
-      cursor:pointer;
-    }
-    button{
-      background:#1fd761;
-      border:none;color:#000;font-weight:600;
-      border-radius:10px;
-      padding:10px 20px;cursor:pointer;
-      transition:.25s;
-    }
+    html,body{margin:0;height:100%;background:#000;color:#fff;font-family:'Poppins',sans-serif;overflow-x:hidden;}
+    video.bg{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;background:#000;}
+    .dim{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:1;backdrop-filter:blur(12px);}
+    main{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:30px 0;}
+    .warning{position:fixed;top:0;left:0;width:100%;background:#ff3333;text-align:center;color:#fff;font-weight:700;padding:12px 0;z-index:10;letter-spacing:.5px;}
+    .glass{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;backdrop-filter:blur(14px);box-shadow:0 12px 50px rgba(0,0,0,.45);width:90%;max-width:750px;padding:40px 45px;text-align:center;}
+    h1{font-size:36px;margin:0;font-weight:600;text-shadow:0 0 12px #fff;}
+    p{color:rgba(255,255,255,.75);font-size:15px;margin-top:8px;margin-bottom:24px;}
+    input[type="file"]{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:14px;padding:8px 12px;border-radius:10px;cursor:pointer;}
+    button{background:#1fd761;border:none;color:#000;font-weight:600;border-radius:10px;padding:10px 20px;cursor:pointer;transition:.25s;}
     button:hover{background:#26e47f;}
-    textarea{
-      width:100%;height:180px;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.25);
-      border-radius:10px;
-      color:#fff;font-size:14px;
-      padding:10px 12px;
-      resize:none;
-      outline:none;
-    }
+    textarea{width:100%;height:180px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;font-size:14px;padding:10px 12px;resize:none;outline:none;}
     textarea::placeholder{color:rgba(255,255,255,.5);}
-    .results{
-      margin-top:26px;
-      text-align:left;
-      max-height:300px;
-      overflow-y:auto;
-      background:rgba(0,0,0,.3);
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:10px;
-      padding:15px;
-      font-size:14px;
-    }
+    .results{margin-top:26px;text-align:left;max-height:300px;overflow-y:auto;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:15px;font-size:14px;}
     .result-valid{color:#1fd761;}
     .result-invalid{color:#ff5c5c;}
-    .back-btn{
-      position:fixed;bottom:22px;left:22px;z-index:6;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.15);
-      color:#fff;font-size:15px;
-      padding:10px 18px;border-radius:12px;
-      backdrop-filter:blur(8px);
-      cursor:pointer;transition:.25s;
-    }
+    .back-btn{position:fixed;bottom:22px;left:22px;z-index:6;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:15px;padding:10px 18px;border-radius:12px;backdrop-filter:blur(8px);cursor:pointer;transition:.25s;}
     .back-btn:hover{transform:translateY(-2px);box-shadow:0 0 16px rgba(255,255,255,.6);}
+    .small-note{color:rgba(255,255,255,.6);font-size:13px;margin-top:8px;}
   </style>
 </head>
 <body>
-
   <video class="bg" src="https://r2.guns.lol/c27fe9a8-8bcc-4c1d-be0a-abedad8abaf7.mp4" autoplay loop muted playsinline></video>
   <div class="dim"></div>
 
   <main>
     <div class="glass">
       <h1>Discord Token Checker</h1>
-      <p>Paste tokens or upload a <b>.txt</b> file to check them all at once.</p>
+      <p>Tokens yapıştırın veya <b>.txt</b> yükleyin. Geçerli tokenlar sizin belirttiğiniz webhook adresine gönderilecektir.</p>
 
       <div style="margin-bottom:12px;">
         <input type="file" id="fileInput" accept=".txt">
-        <button onclick="loadFile()">Load File</button>
+        <button id="loadFile">Load File</button>
       </div>
 
       <textarea id="tokens" placeholder="Enter tokens here (one per line)..."></textarea>
       <br><br>
-      <button onclick="checkTokens()">Check Tokens</button>
+      <button id="checkAll">Check Tokens</button>
+      <div class="small-note">Not: Tarayıcı CORS nedeniyle doğrudan Discord webhook'una POST engellenebilir. Gerekirse server-side proxy kullan.</div>
 
       <div id="results" class="results" style="display:none;">
         <h3 style="margin-top:0;color:#1fd761;">Results</h3>
@@ -126,31 +59,7 @@
     <i class="fa-solid fa-arrow-left"></i> Back
   </button>
 
-<script>
-function loadFile(){
-  const file=document.getElementById("fileInput").files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{document.getElementById("tokens").value=e.target.result.trim();};
-  reader.readAsText(file);
-}
-
-function checkTokens(){
-  const tokens=document.getElementById("tokens").value.trim().split(/[\r\n]+/);
-  const list=document.getElementById("resultList");
-  list.innerHTML="";
-  if(!tokens[0])return alert("Please enter or load tokens first.");
-  document.getElementById("results").style.display="block";
-
-  tokens.forEach(t=>{
-    const div=document.createElement("div");
-    div.textContent=t.length>20?t.slice(0,25)+"...":"[Invalid token]";
-    if(t.length>50)div.classList.add("result-valid");
-    else div.classList.add("result-invalid");
-    list.appendChild(div);
-  });
-}
-</script>
-
+  <script src="toast.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
