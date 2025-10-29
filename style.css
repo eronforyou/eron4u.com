@@ -44,7 +44,7 @@ html,body{height:100%;margin:0;background:#000;color:#fff;font-family:'Poppins',
 .toast{
   position:fixed;
   left:50%;
-  bottom:120px; /* kart altına alındı */
+  bottom:120px;
   transform:translateX(-50%) translateY(20px);
   background:rgba(0,0,0,.8);
   color:#fff;
