@@ -17,17 +17,16 @@ volumeSlider.addEventListener('input', e => video.volume = parseFloat(e.target.v
 
 let tiltActive = true;
 
-// mouse kartın üstündeyse durdur
+// kartın üstündeyken tilt durur
 card.addEventListener('mouseenter', () => tiltActive = false);
 card.addEventListener('mouseleave', () => {
   tiltActive = true;
   card.style.transform = 'rotateX(0deg) rotateY(0deg)';
 });
 
-// mouse takibi (sınırlandırılmış)
+// mouse takip, sınırlandırılmış ve sabit
 document.addEventListener('mousemove', e => {
   if (!tiltActive) return;
-
   const rect = card.getBoundingClientRect();
   const centerX = rect.left + rect.width / 2;
   const centerY = rect.top + rect.height / 2;
@@ -35,10 +34,8 @@ document.addEventListener('mousemove', e => {
 
   let dx = e.clientX - centerX;
   let dy = e.clientY - centerY;
-
   const limitX = rect.width;
   const limitY = rect.height;
-
   if (Math.abs(dx) > limitX) dx = limitX * Math.sign(dx);
   if (Math.abs(dy) > limitY) dy = limitY * Math.sign(dy);
 
@@ -51,14 +48,14 @@ document.addEventListener('mousemove', e => {
   card.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
 });
 
-// Discord Presence
+// Discord Presence (GitHub Pages uyumlu proxy)
 const DISCORD_ID = document.querySelector('.wrap').dataset.discordId;
 const p1 = document.getElementById("p-line1");
 const p2 = document.getElementById("p-line2");
 
 async function loadPresence() {
   try {
-    const res = await fetch(`https://lanyard.cnrad.dev/api/v1/users/${DISCORD_ID}`, { cache: "no-store" });
+    const res = await fetch(`https://corsproxy.io/?https://api.lanyard.rest/v1/users/${DISCORD_ID}`, { cache: "no-store" });
     const j = await res.json();
     if (!j.success) throw 0;
     const d = j.data;
