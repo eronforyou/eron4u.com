@@ -1,7 +1,4 @@
-html,body{
-  height:100%;margin:0;background:#000;color:#fff;
-  font-family:'Poppins',sans-serif;overflow:hidden
-}
+html,body{height:100%;margin:0;background:#000;color:#fff;font-family:'Poppins',sans-serif;overflow:hidden}
 .bg-video{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;background:#000}
 .bg-dim{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:1}
 
@@ -52,13 +49,13 @@ html,body{
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* Başta görünmesin; click here sonrası gösterilecek */
 .volume-control{
+  display:none;
   position:fixed;bottom:15px;left:50%;transform:translateX(-50%);
-  display:flex;align-items:center;gap:8px;
+  align-items:center;gap:8px;
   background:rgba(0,0,0,.4);padding:6px 10px;border-radius:10px;
-  backdrop-filter:blur(6px);z-index:10
+  backdrop-filter:blur(6px);z-index:10;
 }
 .volume-control input[type=range]{accent-color:#fff;width:120px}
 .volume-control i{font-size:18px}
-
-#wa-icon { cursor:pointer; }
